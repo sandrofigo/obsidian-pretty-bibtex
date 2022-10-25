@@ -1,8 +1,15 @@
-/*
+.bibtex.normal {
+    color: var(--text-faint);
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.bibtex.value {
+    color: var(--text-muted);
+}
 
-If your plugin does not need CSS, delete this file.
+.bibtex.key {
+    color: var(--text-faint);
+}
 
-*/
+.bibtex.header {
+    color: var(--code-string);
+}

@@ -16,6 +16,36 @@ export default class MyPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
+		this.registerMarkdownCodeBlockProcessor("bibtex", (source: string, el, ctx) => {
+			let codeBlock = el.createEl("pre").createEl("code");
+
+			let regExpBibTex = new RegExp("@(?<type>.*){\\s*(?<id>.*?),(?<attributes>.*?)\\s*}", "s");
+			let matchBibTex = source.match(regExpBibTex);
+
+			if (matchBibTex && matchBibTex.groups) {
+				let type = matchBibTex.groups.type;
+				let id = matchBibTex.groups.id;
+
+				codeBlock.createEl("span", { text: `${id}\n`, cls: "bibtex header" });
+				this.addKeyValueToCodeBlock(codeBlock, "Type", type);
+
+				let attributes = matchBibTex.groups.attributes;
+
+				let regExpAttributes = new RegExp("(?<key>\\w+)\\s*=\\s*\"(?<value>.*?)\"", "gs");
+
+				for (const match of attributes.matchAll(regExpAttributes)) {
+					if (!match.groups)
+						continue;
+
+					let key = match.groups.key;
+					let value = match.groups.value;
+					this.addKeyValueToCodeBlock(codeBlock, key, value);
+				}
+			} else {
+				codeBlock.createEl("span", { text: "Invalid BibTeX format!", cls: "bibtex key" });
+			}
+		});
+
 		// This creates an icon in the left ribbon.
 		const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
 			// Called when the user clicks the icon.
@@ -82,6 +112,17 @@ export default class MyPlugin extends Plugin {
 
 	}
 
+	addKeyValueToCodeBlock(codeBlock: HTMLElement, key: string, value: string): void {
+		codeBlock.createEl("span", { text: this.sanitizeKeyString(key), cls: "bibtex key" });
+		codeBlock.createEl("span", { text: ":", cls: "bibtex normal" });
+		codeBlock.createEl("span", { text: ` ${value}\n`, cls: "bibtex value" });
+	}
+
+	sanitizeKeyString(key: string): string {
+		const allLowerCase = key.toLowerCase();
+		return allLowerCase.charAt(0).toUpperCase() + allLowerCase.slice(1);
+	}
+
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
@@ -97,12 +138,12 @@ class SampleModal extends Modal {
 	}
 
 	onOpen() {
-		const {contentEl} = this;
+		const { contentEl } = this;
 		contentEl.setText('Woah!');
 	}
 
 	onClose() {
-		const {contentEl} = this;
+		const { contentEl } = this;
 		contentEl.empty();
 	}
 }
@@ -116,11 +157,11 @@ class SampleSettingTab extends PluginSettingTab {
 	}
 
 	display(): void {
-		const {containerEl} = this;
+		const { containerEl } = this;
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
+		containerEl.createEl('h2', { text: 'Settings for my awesome plugin.' });
 
 		new Setting(containerEl)
 			.setName('Setting #1')
