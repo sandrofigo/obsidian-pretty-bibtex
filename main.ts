@@ -1,4 +1,5 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, WorkspaceItem, WorkspaceLeaf } from 'obsidian';
+import { StringHelper } from './StringHelper';
 
 const pluginName: string = "Pretty BibTeX";
 
@@ -37,8 +38,8 @@ export default class PrettyBibTexPlugin extends Plugin {
 
 					let key = match.groups.key;
 					let value = match.groups.value.trim().replace(/\{/gs, "",).replace(/\}/gs, "",);
-					value = this.trim(value, ",");
-					value = this.trim(value, "\"");
+					value = StringHelper.trim(value, ",");
+					value = StringHelper.trim(value, "\"");
 
 					this.addKeyValueToCodeBlock(codeBlock, key, value);
 				}
@@ -49,27 +50,9 @@ export default class PrettyBibTexPlugin extends Plugin {
 	}
 
 	addKeyValueToCodeBlock(codeBlock: HTMLElement, key: string, value: string): void {
-		codeBlock.createEl("span", { text: this.sanitizeKeyString(key), cls: "bibtex key" });
+		codeBlock.createEl("span", { text: StringHelper.sanitizeKeyString(key), cls: "bibtex key" });
 		codeBlock.createEl("span", { text: ":", cls: "bibtex normal" });
 		codeBlock.createEl("span", { text: ` ${value}\n`, cls: "bibtex value" });
-	}
-
-	sanitizeKeyString(key: string): string {
-		const allLowerCase = key.toLowerCase();
-		return allLowerCase.charAt(0).toUpperCase() + allLowerCase.slice(1);
-	}
-
-	trim(string: string, char: string): string {
-		var start = 0,
-			end = string.length;
-
-		while (start < end && string[start] === char)
-			++start;
-
-		while (end > start && string[end - 1] === char)
-			--end;
-
-		return (start > 0 || end < string.length) ? string.substring(start, end) : string;
 	}
 
 	async loadSettings() {
