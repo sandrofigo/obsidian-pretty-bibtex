@@ -6,7 +6,8 @@ export abstract class StringHelper {
 	}
 
 	public static trim(str: string, trim: string): string {
-		var start = 0, end = str.length;
+		let start = 0;
+		let end = str.length;
 
 		while (start < end && str[start] === trim)
 			++start;

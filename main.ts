@@ -2,7 +2,7 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 import { StringHelper } from './StringHelper';
 import './string.extensions';
 
-const pluginName: string = "Pretty BibTeX";
+const pluginName = "Pretty BibTeX";
 
 export default class PrettyBibTexPlugin extends Plugin {
 	settings: ISettings;
@@ -13,30 +13,30 @@ export default class PrettyBibTexPlugin extends Plugin {
 		this.addSettingTab(new SettingTab(this.app, this));
 
 		this.registerMarkdownCodeBlockProcessor("bibtex", (source: string, el, ctx) => {
-			let codeBlock = el.createEl("div").createEl("pre").createEl("code");
+			const codeBlock = el.createEl("div").createEl("pre").createEl("code");
 
-			let regExpBibTex = new RegExp("@(?<type>.*?){\\s*(?<id>.*?),(?<attributes>.*)}", "s");
-			let matchBibTex = source.match(regExpBibTex);
+			const regExpBibTex = new RegExp("@(?<type>.*?){\\s*(?<id>.*?),(?<attributes>.*)}", "s");
+			const matchBibTex = source.match(regExpBibTex);
 
 			if (matchBibTex && matchBibTex.groups) {
-				let type = matchBibTex.groups.type;
-				let id = matchBibTex.groups.id;
+				const type = matchBibTex.groups.type;
+				const id = matchBibTex.groups.id;
 
 				codeBlock.createEl("span", { text: `${id}\n`, cls: "bibtex header" });
 
 				if (this.settings.showType)
 					this.addKeyValueToCodeBlock(codeBlock, "Type", type);
 
-				let lines = matchBibTex.groups.attributes.split(/\r?\n/).map(line => line.trim()).filter(line => line);
+				const lines = matchBibTex.groups.attributes.split(/\r?\n/).map(line => line.trim()).filter(line => line);
 
-				let attributes: string[] = [];
+				const attributes: string[] = [];
 
-				let regExpHasKeyValue = new RegExp("^\\w+\\s*=\\s*\\S");
+				const regExpHasKeyValue = new RegExp("^\\w+\\s*=\\s*\\S");
 
 				for (let i = 0; i < lines.length; i++) {
 					const line = lines[i];
 
-					let hasKeyValue = regExpHasKeyValue.test(line);
+					const hasKeyValue = regExpHasKeyValue.test(line);
 
 					if (hasKeyValue) {
 						attributes.push(line);
@@ -46,16 +46,14 @@ export default class PrettyBibTexPlugin extends Plugin {
 				}
 
 				for (const attribute of attributes) {
-					let regExpAttributes = new RegExp("(?<key>\\w+)\\s*=\\s*(?<value>.*)", "g");
+					const regExpAttributes = new RegExp("(?<key>\\w+)\\s*=\\s*(?<value>.*)", "g");
 
 					for (const match of attribute.matchAll(regExpAttributes)) {
 						if (!match.groups)
 							continue;
 
-						let key = match.groups.key;
-						let value = match.groups.value.trim().replaceAll("{", "").replaceAll("}", "");
-						value = value.trimString(",");
-						value = value.trimString("\"");
+						const key = match.groups.key;
+						const value = match.groups.value.trim().replaceAll("{", "").replaceAll("}", "").trimString(",").trimString("\"");
 
 						this.addKeyValueToCodeBlock(codeBlock, key, value);
 					}
