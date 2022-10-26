@@ -11,5 +11,5 @@
 }
 
 .bibtex.header {
-    color: var(--code-string);
+    color: var(--text-accent);
 }
