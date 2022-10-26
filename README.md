@@ -1,6 +1,6 @@
 # Pretty BibTeX Obsidian Plugin
 
-This plugin renders raw bibliography entries in the BibTeX format in a more readable way.
+This plugin renders bibliography entries in the BibTeX format in a more readable way.
 
 
 ## Demonstration
