@@ -15,11 +15,11 @@ Creating a standard code block with the language set to "bibtex" will transform 
 
 ### Before:
 
-![Standard code block without plugin](imgs/before.png)
+<img src="https://github.com/sandrofigo/obsidian-pretty-bibtex/blob/master/imgs/before.png" alt="Code block before enabling the plugin">
 
 ### After:
 
-![Standard code block without plugin](imgs/after.png)
+<img src="https://github.com/sandrofigo/obsidian-pretty-bibtex/blob/master/imgs/after.png" alt="Code block after enabling the plugin">
 
 The header color is defined by the `'Accent color'` in Obsidian.
 
