@@ -26,7 +26,7 @@ The header color is defined by the `'Accent color'` in Obsidian.
 # FAQ
 
 - Q: After enabling the plugin or changing settings, I don't see the BibTeX entries rendered correctly, what can I do?
-	- A: Close and reopen the affected notes in your vault or restart Obsidian.
+- A: Close and reopen the affected notes in your vault or restart Obsidian.
 
 ## Collaboration
 Support this plugin with a ⭐️, report an issue or if you feel adventurous and would like to extend the functionality or make the plugin ✨ prettier ✨ open a pull request.
