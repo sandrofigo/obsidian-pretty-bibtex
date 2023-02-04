@@ -18,6 +18,8 @@ export default class PrettyBibTexPlugin extends Plugin {
 			const regExpBibTex = new RegExp("@(?<type>.*?){\\s*(?<id>.*?),(?<attributes>.*)}", "s");
 			const matchBibTex = source.match(regExpBibTex);
 
+			//TODO: split multiple entries with "@(?<type>.*?){"
+
 			if (matchBibTex && matchBibTex.groups) {
 				const type = matchBibTex.groups.type;
 				const id = matchBibTex.groups.id;
