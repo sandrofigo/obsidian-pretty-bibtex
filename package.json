@@ -24,5 +24,8 @@
 		"obsidian": "latest",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
+	},
+	"dependencies": {
+		"@orcid/bibtex-parse-js": "^0.0.25"
 	}
 }

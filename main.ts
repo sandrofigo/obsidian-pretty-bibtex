@@ -2,6 +2,7 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Set
 import { StringHelper } from './StringHelper';
 import './string.extensions';
 
+const matcherBibTex = require('@orcid/bibtex-parse-js');
 const pluginName = "Pretty BibTeX";
 
 export default class PrettyBibTexPlugin extends Plugin {
@@ -15,55 +16,27 @@ export default class PrettyBibTexPlugin extends Plugin {
 		this.registerMarkdownCodeBlockProcessor("bibtex", (source: string, el, ctx) => {
 			const codeBlock = el.createEl("div").createEl("pre").createEl("code");
 
-			const regExpBibTex = new RegExp("@(?<type>.*?){\\s*(?<id>.*?),(?<attributes>.*)}", "s");
-			const matchBibTex = source.match(regExpBibTex);
+			try {
+				const result = matcherBibTex.toJSON(source);
+				result.forEach((it: { [x: string]: any; }) => {
+					let id = it["citationKey"];
+					let type = it["entryType"];
 
-			//TODO: split multiple entries with "@(?<type>.*?){"
+					codeBlock.createEl("span", { text: `${id}\n`, cls: "bibtex header" });
+					if (this.settings.showType)
+						this.addKeyValueToCodeBlock(codeBlock, "Type", type);
 
-			if (matchBibTex && matchBibTex.groups) {
-				const type = matchBibTex.groups.type;
-				const id = matchBibTex.groups.id;
-
-				codeBlock.createEl("span", { text: `${id}\n`, cls: "bibtex header" });
-
-				if (this.settings.showType)
-					this.addKeyValueToCodeBlock(codeBlock, "Type", type);
-
-				const lines = matchBibTex.groups.attributes.split(/\r?\n/).map(line => line.trim()).filter(line => line);
-
-				const attributes: string[] = [];
-
-				const regExpHasKeyValue = new RegExp("^\\w+\\s*=\\s*\\S");
-
-				for (let i = 0; i < lines.length; i++) {
-					const line = lines[i];
-
-					const hasKeyValue = regExpHasKeyValue.test(line);
-
-					if (hasKeyValue) {
-						attributes.push(line);
-					} else if (attributes.length > 0) {
-						attributes[attributes.length - 1] = attributes[attributes.length - 1].concat(` ${line}`);
+					let dict = it["entryTags"];
+					let keys = Object.keys(dict);
+					for (let i = 0; i < keys.length; i++) {
+						this.addKeyValueToCodeBlock(codeBlock, keys[i], dict[keys[i]]);
 					}
-				}
 
-				for (const attribute of attributes) {
-					const regExpAttributes = new RegExp("(?<key>\\w+)\\s*=\\s*(?<value>.*)", "g");
-
-					for (const match of attribute.matchAll(regExpAttributes)) {
-						if (!match.groups)
-							continue;
-
-						const key = match.groups.key;
-						const value = match.groups.value.trim().replaceAll("{", "").replaceAll("}", "").trimString(",").trimString("\"");
-
-						this.addKeyValueToCodeBlock(codeBlock, key, value);
-					}
-				}
-
-			} else {
+				});
+			} catch (exception) {
 				codeBlock.createEl("span", { text: "Invalid BibTeX format!", cls: "bibtex key" });
 			}
+			
 		});
 	}
 
