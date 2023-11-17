@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
 
+- Added support for special characters e.g. {\'e}
+
+### Changed
+
+- Replace parsing code with bibtex-parser (https://github.com/retorquere/bibtex-parser)
 
 ## [1.0.0] - 2022-08-26
 
