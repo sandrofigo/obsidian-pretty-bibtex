@@ -51,6 +51,9 @@ export default class PrettyBibTexPlugin extends Plugin {
 					Object.keys(entry.fields).sort(sortByDesiredOrderOfFields).forEach(key => {
 						this.addKeyValueToCodeBlock(codeBlock, key, entry.fields[key].join(" and "));
 					});
+
+					if (result.entries.length >= 1 && index < result.entries.length - 1)
+						this.addSpacerCodeBlock(codeBlock);
 				});
 			} catch (exception) {
 				codeBlock.createEl("span", {text: "Invalid BibTeX format!", cls: "bibtex key"});
@@ -62,6 +65,10 @@ export default class PrettyBibTexPlugin extends Plugin {
 		codeBlock.createEl("span", {text: StringHelper.sanitizeKeyString(key), cls: "bibtex key"});
 		codeBlock.createEl("span", {text: ":", cls: "bibtex normal"});
 		codeBlock.createEl("span", {text: ` ${value}\n`, cls: "bibtex value"});
+	}
+
+	addSpacerCodeBlock(codeBlock: HTMLElement): void {
+		codeBlock.createEl("span", {text: "\n", cls: "bibtex normal"});
 	}
 
 	async loadSettings() {
