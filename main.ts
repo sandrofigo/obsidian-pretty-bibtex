@@ -12,7 +12,8 @@ import {
 } from 'obsidian';
 import {StringHelper} from './StringHelper';
 import './string.extensions';
-import {parse} from "@retorquere/bibtex-parser";
+import {ast as bibTexParserAst, parse as bibTexParserParse} from "@retorquere/bibtex-parser";
+import {Entry} from "@retorquere/bibtex-parser/grammar";
 
 const pluginName = "Pretty BibTeX";
 
@@ -28,18 +29,26 @@ export default class PrettyBibTexPlugin extends Plugin {
 			const codeBlock = el.createEl("div").createEl("pre").createEl("code");
 
 			try {
-				const result = parse(source);
+				const result = bibTexParserParse(source);
 
 				if (result.entries.length == 0)
 					codeBlock.createEl("span", {text: "No valid BibTex entries found!", cls: "bibtex key"});
 
-				result.entries.forEach(entry => {
+				const ast = bibTexParserAst(source);
+
+				result.entries.forEach((entry, index) => {
 					codeBlock.createEl("span", {text: `${entry.key}\n`, cls: "bibtex header"});
 
 					if (this.settings.showType)
 						this.addKeyValueToCodeBlock(codeBlock, "Type", entry.type);
 
-					Object.keys(entry.fields).forEach(key => {
+					const desiredOrderOfFields = (ast[index] as Entry).fields.map(f => f.name);
+
+					const sortByDesiredOrderOfFields = (a: string, b: string): number => {
+						return desiredOrderOfFields.indexOf(a) - desiredOrderOfFields.indexOf(b);
+					};
+
+					Object.keys(entry.fields).sort(sortByDesiredOrderOfFields).forEach(key => {
 						this.addKeyValueToCodeBlock(codeBlock, key, entry.fields[key].join(" and "));
 					});
 				});
