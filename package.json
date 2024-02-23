@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-pretty-bibtex",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Shows raw BibTeX bibliography entries in a prettier way",
 	"main": "main.js",
 	"scripts": {
