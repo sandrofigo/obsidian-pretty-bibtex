@@ -11,7 +11,6 @@ import {
 	WorkspaceLeaf
 } from 'obsidian';
 import {StringHelper} from './StringHelper';
-import './string.extensions';
 import {ast as bibTexParserAst, parse as bibTexParserParse} from "@retorquere/bibtex-parser";
 import {Entry} from "@retorquere/bibtex-parser/grammar";
 
